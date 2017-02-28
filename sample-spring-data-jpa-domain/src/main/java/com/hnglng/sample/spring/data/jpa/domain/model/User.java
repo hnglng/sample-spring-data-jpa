@@ -1,13 +1,22 @@
 package com.hnglng.sample.spring.data.jpa.domain.model;
 
+import javax.persistence.*;
+
 /**
  * Created by huang_liang on 2017/2/23.
  */
+@Entity
+@Table(name="user")
 public class User {
+    @Id
+    @GeneratedValue
     private Long id;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private Integer age;
 
+    public User(){}
 
     public User(Long id, String name, Integer age) {
         this.id = id;

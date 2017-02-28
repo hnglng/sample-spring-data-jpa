@@ -1,7 +1,7 @@
 package com.hnglng.sample.spring.data.jpa.web.controller;
 
 import com.hnglng.sample.spring.data.jpa.domain.model.User;
-import com.hnglng.sample.spring.data.jpa.domain.service.UserService;
+import com.hnglng.sample.spring.data.jpa.infrastructure.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

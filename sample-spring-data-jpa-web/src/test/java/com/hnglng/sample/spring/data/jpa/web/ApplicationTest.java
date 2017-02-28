@@ -2,7 +2,8 @@ package com.hnglng.sample.spring.data.jpa.web;
 
 import com.hnglng.sample.spring.data.jpa.Application;
 import com.hnglng.sample.spring.data.jpa.domain.model.User;
-import com.hnglng.sample.spring.data.jpa.domain.model.UserMapper;
+import com.hnglng.sample.spring.data.jpa.infrastructure.persistence.UserRepository;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,56 +23,43 @@ import static org.junit.Assert.assertNotEquals;
  * Created by huang_liang on 2017/2/23.
  */
 
-@Transactional
 @SpringBootTest(classes = Application.class)
 @RunWith(SpringRunner.class)
 public class ApplicationTest {
     @Autowired
-    private UserMapper userMapper;
+    private UserRepository userRepository;
 
     @Test
-    @Rollback
-    public void findByName() throws Exception {
-        userMapper.insert("AAA", 20);
-        User u = userMapper.findByName("AAA");
-        assertEquals(20, u.getAge().intValue());
-    }
+    public void test() throws Exception {
+        // 创建10条记录
+        userRepository.save(new User("AAA", 10));
+        userRepository.save(new User("BBB", 20));
+        userRepository.save(new User("CCC", 30));
+        userRepository.save(new User("DDD", 40));
+        userRepository.save(new User("EEE", 50));
+        userRepository.save(new User("FFF", 60));
+        userRepository.save(new User("GGG", 70));
+        userRepository.save(new User("HHH", 80));
+        userRepository.save(new User("III", 90));
+        userRepository.save(new User("JJJ", 100));
 
-    @Test
-    @Rollback
-    public void testUserMapper() throws Exception {
-        // insert一条数据，并select出来验证
-        userMapper.insert("AAA", 20);
-        User u = userMapper.findByName("AAA");
-        assertEquals(20, u.getAge().intValue());
+        // 测试findAll, 查询所有记录
+        Assert.assertEquals(10, userRepository.findAll().size());
 
-        // update一条数据，并select出来验证
-        u.setAge(30);
-        userMapper.update(u);
-        u = userMapper.findByName("AAA");
-        assertEquals(30, u.getAge().intValue());
+        // 测试findByName, 查询姓名为FFF的User
+        Assert.assertEquals(60, userRepository.findByName("FFF").getAge().longValue());
 
-        // 删除这条数据，并select验证
-        userMapper.delete(u.getId());
-        u = userMapper.findByName("AAA");
-        assertEquals(null, u);
+        // 测试findUser, 查询姓名为FFF的User
+        Assert.assertEquals(60, userRepository.findUser("FFF").getAge().longValue());
 
-        u = new User("BBB", 30);
-        userMapper.insertByUser(u);
-        assertEquals(30, userMapper.findByName("BBB").getAge().intValue());
+        // 测试findByNameAndAge, 查询姓名为FFF并且年龄为60的User
+        Assert.assertEquals("FFF", userRepository.findByNameAndAge("FFF", 60).getName());
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "CCC");
-        map.put("age", 40);
-        userMapper.insertByMap(map);
-        assertEquals(40, userMapper.findByName("CCC").getAge().intValue());
+        // 测试删除姓名为AAA的User
+        userRepository.delete(userRepository.findByName("AAA"));
 
-        List<User> userList = userMapper.findAll();
-        for(User user : userList) {
-            assertEquals(null, user.getId());
-            assertNotEquals(null, user.getName());
-        }
-
+        // 测试findAll, 查询所有记录, 验证上面的删除是否成功
+        Assert.assertEquals(9, userRepository.findAll().size());
     }
 
 }

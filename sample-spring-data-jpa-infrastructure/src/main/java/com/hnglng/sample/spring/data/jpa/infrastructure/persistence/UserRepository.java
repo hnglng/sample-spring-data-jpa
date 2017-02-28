@@ -1,11 +1,21 @@
 package com.hnglng.sample.spring.data.jpa.infrastructure.persistence;
 
 
+import com.hnglng.sample.spring.data.jpa.domain.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
  * Created by huang_liang on 2017/2/23.
  */
 @Repository
-public class UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
+    User findByName(String name);
+
+    User findByNameAndAge(String name, Integer age);
+
+    @Query("from User u where u.name=:name")
+    User findUser(@Param("name") String name);
 }
